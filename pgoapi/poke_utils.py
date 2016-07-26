@@ -12,7 +12,15 @@ def get_inventory_data(res, poke_names):
     inventory_items_pokemon_list = filter(lambda x: 'pokemon_data' in x and 'is_egg' not in x['pokemon_data'],
                                           inventory_items_dict_list)
 
-    return (os.linesep.join(map(lambda x: "{0}, CP {1}, IV {2:.2f}".format(
-        poke_names[str(x['pokemon_data']['pokemon_id'])].encode('ascii', 'ignore'),
-        x['pokemon_data']['cp'],
-        pokemonIVPercentage(x['pokemon_data'])), inventory_items_pokemon_list)))
+    rs = "\n"
+    i = 0
+
+    for x in inventory_items_pokemon_list:
+        r = "{0} CP:{1} IV:{2:.2f}".format(poke_names[str(x['pokemon_data']['pokemon_id'])].encode('ascii', 'ignore'), x['pokemon_data']['cp'], pokemonIVPercentage(x['pokemon_data']))
+        i += 1
+        if i % 5 == 0:
+            rs += "{0: <35}\n".format(r)
+        else:
+            rs += "{0: <35}".format(r)
+
+    return rs
