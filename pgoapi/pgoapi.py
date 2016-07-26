@@ -46,6 +46,14 @@ MIN_BAD_ITEM_COUNTS = {Inventory.ITEM_POTION: 0,
                        Inventory.ITEM_MAX_REVIVE: 50}
 MIN_SIMILAR_POKEMON = 1
 
+EVOLVE_ID_CANDIES = {10: 12,  # Caterpie
+                     13: 12,  # Weedle
+                     16: 12,  # Pidgey
+                     19: 25,  # Rattata
+                     21: 50,  # Spearow
+                     41: 50,  # Zubat
+                     96: 50,  # Drowzee
+                     98: 50}  # Krabby
 
 class PGoApi:
 
@@ -106,9 +114,10 @@ class PGoApi:
 
     def get_position(self):
         return (self._position_lat, self._position_lng, self._position_alt)
+
     def set_position(self, lat, lng, alt):
         self.log.debug('Set Position - Lat: %s Long: %s Alt: %s', lat, lng, alt)
-        self._posf = (lat,lng,alt)
+        self._posf = (lat, lng, alt)
         self._position_lat = f2i(lat)
         self._position_lng = f2i(lng)
         self._position_alt = f2i(alt)
@@ -249,17 +258,29 @@ class PGoApi:
 
         for pokemons in caught_pokemon.values():
             if len(pokemons) > MIN_SIMILAR_POKEMON:
-                pokemons = sorted(pokemons, lambda x,y: cmp(x['cp'],y['cp']),reverse=True)
+                pokemons = sorted(pokemons, lambda x, y: cmp(x['cp'], y['cp']), reverse=True)
                 for pokemon in pokemons[MIN_SIMILAR_POKEMON:]:
-                    if 'cp' in pokemon and pokemonIVPercentage(pokemon) < self.MIN_KEEP_IV and pokemon['cp'] < self.KEEP_CP_OVER:
-                        if pokemon['pokemon_id'] == 16:
+                    iv = pokemonIVPercentage(pokemon)
+                    if 'cp' in pokemon and iv < self.MIN_KEEP_IV and pokemon['cp'] < self.KEEP_CP_OVER:
+                        if EVOLVE_ID_CANDIES.get(pokemon['pokemon_id']):
+                            candies = EVOLVE_ID_CANDIES.get(pokemon['pokemon_id'])
+                            self.log.debug("Pokemon requires {} candies to evolve.".format(candies))
                             for inventory_item in inventory_items:
-                                if "pokemon_family" in inventory_item['inventory_item_data'] and inventory_item['inventory_item_data']['pokemon_family']['family_id'] == 16 and inventory_item['inventory_item_data']['pokemon_family']['candy'] > 11:
-                                  self.log.info("Evolving pokemon: %s", self.pokemon_names[str(pokemon['pokemon_id'])])
-                                  self.evolve_pokemon(pokemon_id = pokemon['id'])
-                        self.log.debug("Releasing pokemon: %s", pokemon)
-                        self.log.info("Releasing pokemon: %s IV: %s", self.pokemon_names[str(pokemon['pokemon_id'])], pokemonIVPercentage(pokemon))
-                        self.release_pokemon(pokemon_id = pokemon["id"])
+                                if "pokemon_family" in inventory_item['inventory_item_data'] and \
+                                                inventory_item['inventory_item_data']['pokemon_family']['family_id'] == \
+                                                pokemon['pokemon_id'] and \
+                                                inventory_item['inventory_item_data']['pokemon_family'][
+                                                    'candy'] >= candies:
+                                    self.log.info("Evolving pokemon: %s",
+                                                  self.pokemon_names[str(pokemon['pokemon_id'])])
+                                    self.evolve_pokemon(pokemon_id=pokemon['id'])
+                                else:
+                                    self.log.debug("Could not evolve pokemon. Not enough candies or ...")
+                        else:
+                            self.log.debug("Releasing pokemon: %s", pokemon)
+                            self.log.info("Releasing pokemon: %s IV: %s",
+                                          self.pokemon_names[str(pokemon['pokemon_id'])], pokemonIVPercentage(pokemon))
+                            self.release_pokemon(pokemon_id=pokemon["id"])
 
         return self.call()
 

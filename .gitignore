@@ -90,6 +90,10 @@ ENV/
 
 # Personal load details
 config.json
+accounts/
+
+# Idea
+.idea
 
 .DS_Store
 data_dumps/*.json
