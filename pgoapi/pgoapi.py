@@ -30,12 +30,20 @@ logger = logging.getLogger(__name__)
 BAD_ITEM_IDS = [101,102,701,702,703] #Potion, Super Potion, RazzBerry, BlukBerry, Revive
 
 # Minimum amount of the bad items that you should have ... Modify based on your needs ... like if you need to battle a gym?
-MIN_BAD_ITEM_COUNTS = {Inventory.ITEM_POTION: 10,
+MIN_BAD_ITEM_COUNTS = {Inventory.ITEM_POTION: 0,
                        Inventory.ITEM_SUPER_POTION: 10,
+                       Inventory.ITEM_HYPER_POTION: 50,
+                       Inventory.ITEM_MAX_POTION: 50,
                        Inventory.ITEM_RAZZ_BERRY: 10,
                        Inventory.ITEM_BLUK_BERRY: 10,
                        Inventory.ITEM_NANAB_BERRY: 10,
-                       Inventory.ITEM_REVIVE: 10}
+                       Inventory.ITEM_POKE_BALL: 10,
+                       Inventory.ITEM_GREAT_BALL: 10,
+                       Inventory.ITEM_ULTRA_BALL: 50,
+                       Inventory.ITEM_MASTER_BALL: 100,
+                       Inventory.ITEM_INCENSE_ORDINARY: 2,
+                       Inventory.ITEM_REVIVE: 10,
+                       Inventory.ITEM_MAX_REVIVE: 50}
 MIN_SIMILAR_POKEMON = 1
 
 
