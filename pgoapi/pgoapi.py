@@ -149,7 +149,7 @@ class PGoApi:
             player_data = res['responses'].get('GET_PLAYER', {}).get('player_data', {})
             currencies = player_data.get('currencies', [])
             currency_data = ",".join(map(lambda x: "{0}: {1}".format(x.get('name', 'NA'), x.get('amount', 'NA')), currencies))
-            self.log.info("Username: %s, Currencies: %s", player_data.get('username', 'NA'), currency_data)
+            # self.log.info("Username: %s, Currencies: %s", player_data.get('username', 'NA'), currency_data)
 
         if 'GET_INVENTORY' in res['responses']:
             with open("accounts/%s.json" % self.config['username'], "w") as f:
@@ -167,7 +167,7 @@ class PGoApi:
             for i,next_point in enumerate(get_increments(self._posf,step,self.config.get("STEP_SIZE", 200))):
                 self.set_position(*next_point)
                 self.heartbeat()
-                self.log.info("Sleeping before next heartbeat")
+                # self.log.info("Sleeping before next heartbeat")
                 sleep(2) # If you want to make it faster, delete this line... would not recommend though
                 while self.catch_near_pokemon():
                     sleep(1) # If you want to make it faster, delete this line... would not recommend though
