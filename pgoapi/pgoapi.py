@@ -227,7 +227,7 @@ class PGoApi:
                 encounter_id=encounter_id,
                 spawn_point_guid=spawn_point_guid,
                 ).call()['responses']['CATCH_POKEMON']
-            if "status" in r:
+            if r.get('status') or r.get('status_code'):
                 return r
 
     def cleanup_inventory(self, inventory_items=None):
@@ -300,6 +300,12 @@ class PGoApi:
             capture_status = -1
             while capture_status != 0 and capture_status != 3:
                 catch_attempt = self.attempt_catch(encounter_id,spawn_point_id)
+                if catch_attempt == None:
+                    self.log.error("Something went wrong")
+                    return False
+                if catch_attempt.get('status_code'):
+                    self.log.info("Pokemon fled, if this keeps up you might have been softbanned.")
+                    return False
                 capture_status = catch_attempt['status']
                 if capture_status == 1:
                     self.log.debug("Caught Pokemon: : %s", catch_attempt)
