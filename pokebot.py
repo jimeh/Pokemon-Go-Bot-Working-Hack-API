@@ -51,6 +51,13 @@ def api_player():
     return flask.jsonify(data)
 
 
+@app.route('/api/player/profile')
+def api_player_profile():
+    res = my_server.api.get_player_profile().call()
+    data = res['responses']['GET_PLAYER_PROFILE']
+    return flask.jsonify(data)
+
+
 @app.route('/api/inventory')
 def api_inventory():
     res = my_server.api.get_inventory().call()
