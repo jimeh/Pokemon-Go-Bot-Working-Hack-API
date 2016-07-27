@@ -105,10 +105,13 @@ app.controller("homeCtrl", function($scope, $interval, $http) {
         console.error(response)
     })
 
+    $scope.path = []
+
     $scope.updateNearby = function(){
         $http.get('/api/location').then(function successCb(response) {
             console.log('location', response)
             $scope.location = response.data
+            $scope.path.push($scope.location)
         }, function errorCb(response){
             console.error(response)
         })
@@ -177,6 +180,7 @@ app.controller("homeCtrl", function($scope, $interval, $http) {
             <marker position="{{point.lat}},{{point.lng}}" icon="{{point.icon}}" ng-repeat="point in nearby_forts track by point.id"></marker>
             <marker position="{{point.lat}},{{point.lng}}" icon="{{point.icon}}" ng-repeat="point in nearby_pokemons track by point.id"></marker>
             <marker position="{{location.lat}},{{location.lng}}" icon="{{point.icon}}"></marker>
+            <shape name="polyline" path="{{path}}" stroke-color="#FF0000" stroke-opacity="1.0" stroke-weight="2">
         </ng-map>
     </div>
     <div class="cols">
