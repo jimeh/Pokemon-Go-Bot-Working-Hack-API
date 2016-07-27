@@ -114,6 +114,21 @@ app.controller("homeCtrl", function($scope, $interval, $http) {
             var nearby_pokemons = []
             if (cells && cells.length > 0) {
                 cells.forEach(function processCell(cell, i) {
+                    if (cell.forts && cell.forts.length > 0) {
+                        cell.forts.forEach(function processPoint(point, j) {
+                            var icon = 'resources/icons/pokestop.png'
+                            if (!point.type) {
+                                icon = 'resources/icons/fort-' + (point.owned_by_team || '0') + '.png'
+                            } else if (point.type == 2) { // TODO(geoah) This is an assumption
+                                icon = 'resources/icons/pokestop-lured.png'
+                            }
+                            nearby_forts.push({
+                                lat: point.latitude,
+                                lng: point.longitude,
+                                icon: icon
+                            })
+                        })
+                    }
                     if (cell.catchable_pokemons && cell.catchable_pokemons.length > 0) {
                         cell.catchable_pokemons.forEach(function processPoint(point, j) {
                             nearby_pokemons.push({
@@ -148,7 +163,7 @@ app.controller("homeCtrl", function($scope, $interval, $http) {
 <div id="container" ng-app="pogo" ng-controller="homeCtrl">
     <div>
         <h3>Your location <small>(<a href="#" ng-click="updateNearby()">update</a>)</small></h3>
-        <ng-map center="[{{location.lat}}, {{location.lng}}]" class="map">
+        <ng-map zoom="17" center="[{{location.lat}}, {{location.lng}}]" class="map">
             <marker position="{{point.lat}},{{point.lng}}" icon="{{point.icon}}" ng-repeat="point in nearby_forts"></marker>
             <marker position="{{point.lat}},{{point.lng}}" icon="{{point.icon}}" ng-repeat="point in nearby_pokemons"></marker>
             <marker position="{{location.lat}},{{location.lng}}" icon="{{point.icon}}"></marker>
