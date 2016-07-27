@@ -88,7 +88,7 @@ def api_pokemon_names():
 
 
 def start_server():
-    app.run(host="0.0.0.0", port=3000, debug=False, use_reloader=False, threaded=True)
+    app.run(host="0.0.0.0", port=3001, debug=False, use_reloader=False, threaded=True)
 
 
 def get_pos_by_name(location_name):
