@@ -39,6 +39,11 @@ def index():
     return send_from_directory('templates', 'index.html')
 
 
+@app.route('/resources/<path:path>')
+def send_js(path):
+    return send_from_directory('resources', path)
+
+
 @app.route('/api/player')
 def api_player():
     res = my_server.api.get_player().call()
