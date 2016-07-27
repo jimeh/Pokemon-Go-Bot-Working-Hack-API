@@ -134,7 +134,7 @@ app.controller("homeCtrl", function($scope, $interval, $http) {
                             nearby_pokemons.push({
                                 lat: point.latitude,
                                 lng: point.longitude,
-                                icon: 'resources/pokemons/' + point.pokemon_id +'.png',
+                                icon: 'resources/icons/' + point.pokemon_id +'.png',
                                 expiration: point.expiration_timestamp_ms
                             })
                         })
