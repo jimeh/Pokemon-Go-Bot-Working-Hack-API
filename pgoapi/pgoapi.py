@@ -70,6 +70,7 @@ class PGoApi:
         self._req_method_list = []
         self._heartbeat_number = 5
         self.pokemon_names = pokemon_names
+        self.map_cells = dict()
 
     def call(self):
         if not self._req_method_list:
@@ -109,7 +110,10 @@ class PGoApi:
         self._ = logger or logging.getLogger(__name__)
 
     def get_position(self):
-        return (self._position_lat, self._position_lng, self._position_alt)
+        return self._position_lat, self._position_lng, self._position_alt
+
+    def get_position_f(self):
+        return self._posf
 
     def set_position(self, lat, lng, alt):
         self.log.debug('Set Position - Lat: %s Long: %s Alt: %s', lat, lng, alt)
@@ -198,6 +202,7 @@ class PGoApi:
     def catch_near_pokemon(self):
         map_cells = self.nearby_map_objects()['responses']['GET_MAP_OBJECTS']['map_cells']
         pokemons = PGoApi.flatmap(lambda c: c.get('catchable_pokemons', []), map_cells)
+        self.map_cells = map_cells
 
         # catch first pokemon:
         origin = (self._posf[0], self._posf[1])

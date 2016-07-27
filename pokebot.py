@@ -53,6 +53,22 @@ def api_inventory():
     return flask.jsonify(data)
 
 
+@app.route('/api/location')
+def api_location():
+    lla = my_server.api.get_position_f()
+    data = dict()
+    data['lat'] = lla[0]
+    data['lng'] = lla[1]
+    data['alt'] = lla[2]
+    return flask.jsonify(data)
+
+
+@app.route('/api/nearby')
+def api_nearby():
+    data = my_server.api.map_cells or dict()
+    return flask.jsonify(data)
+
+
 @app.route('/api/pokemon_names')
 def api_pokemon_names():
     print(my_server.api)
