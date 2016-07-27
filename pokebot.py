@@ -162,17 +162,14 @@ def main():
     if not api.login(config.auth_service, config.username, config.password, config.cached):
         return
     while True:
-        # try:
-        api.main_loop()
-        # except Exception as e:
-        #     log.error('Main loop has an ERROR, restarting %s', e)
-        #     sleep(30)
-        #     main()
+        try:
+            api.main_loop()
+        except Exception as e:
+            log.error('Main loop has an ERROR, restarting %s', e)
+            sleep(30)
+            main()
 
 
 if __name__ == '__main__':
-    # p = Process(target=start_server)
-    # p.daemon = True
-    # p.start()
     thread.start_new_thread(start_server,())
     main()
