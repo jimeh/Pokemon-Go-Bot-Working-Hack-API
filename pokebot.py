@@ -90,6 +90,7 @@ def api_pokemon_names():
 
 def start_server():
     port = os.getenv('PORT', 3001)
+    app.logger.setLevel(logging.ERROR)
     app.run(host="0.0.0.0", port=port, debug=False, use_reloader=False, threaded=True)
 
 def get_pos_by_name(location_name):
@@ -136,10 +137,10 @@ def init_config():
 
 
 def main():
-    logging.basicConfig(level=logging.INFO, format='%(asctime)s [%(module)10s] [%(levelname)5s] %(message)s')
+    logging.basicConfig(level=logging.WARNING, format='%(asctime)s [%(module)10s] [%(levelname)5s] %(message)s')
     logging.getLogger("requests").setLevel(logging.WARNING)
     logging.getLogger("pgoapi").setLevel(logging.INFO)
-    logging.getLogger("rpc_api").setLevel(logging.INFO)
+    logging.getLogger("rpc_api").setLevel(logging.WARNING)
 
     config = init_config()
     if not config:
