@@ -275,8 +275,8 @@ class PGoApi:
                                     sleep(5) # Evolution animation takes time, so let's fake it
                                 else:
                                     self.log.debug("Could not evolve pokemon. Not enough candies or ...")
-                        else:
-                            self.log.debug("Releasing pokemon: %s", pokemon)
+                            # TODO(geoah) Check if we still need to release after evolving. It doesn't really make sense not to
+                            # but it seems to be breaking something.
                             self.log.info("Releasing pokemon: %s IV: %s",
                                           self.pokemon_names[str(pokemon['pokemon_id'])], pokemonIVPercentage(pokemon))
                             self.release_pokemon(pokemon_id=pokemon["id"])
