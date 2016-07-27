@@ -17,6 +17,7 @@ import argparse
 from flask.helpers import send_from_directory
 from flask.templating import render_template
 from pgoapi import PGoApi
+from time import sleep
 from geopy.geocoders import GoogleV3
 from flask import Flask
 
