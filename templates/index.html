@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.8/angular.min.js"></script>
+<body>
+
+<script>
+var app = angular.module("pogo", []);
+app.controller("homeCtrl", function($scope, $http) {
+    $scope.isPokemon = function(item){
+        if (item.inventory_item_data.pokemon_data) {
+            if ((item.inventory_item_data.pokemon_data.pokemon_id || 0) > 0) {
+              return true
+            }
+        }
+        return false
+    }
+
+    $http.get('/api/pokemon_names').then(function successCb(response) {
+        console.log(response);
+        $scope.names = response.data;
+    }, function errorCb(response){
+        console.error(response);
+    });
+
+    $http.get('/api/inventory').then(function successCb(response) {
+        console.log(response);
+        $scope.inventory = response.data;
+    }, function errorCb(response){
+        console.error(response);
+    });
+});
+</script>
+
+<div ng-app="pogo" ng-controller="homeCtrl">
+  <h3>Pokemon</h3>
+  <ul>
+    <li ng-repeat="item in inventory | orderBy:'-inventory_item_data.pokemon_data.cp' | filter:isPokemon:item.inventory_item_data.pokemon_data.pokemon_id">
+      {{names[item.inventory_item_data.pokemon_data.pokemon_id]}} (CP:{{item.inventory_item_data.pokemon_data.cp}})
+    </li>
+  </ul>
+</div>
+
+</body>
+</html>
+

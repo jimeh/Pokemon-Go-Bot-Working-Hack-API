@@ -5,22 +5,71 @@
 # If you want to make the bot as fast as possible for catching more pokemon (like you are driving a fast car--it won't
 # look suspicious though, since it only goes on paths), make stepsize 200.
 # For more info see that method in pgoapi.py under pgoapi... but still I wouldn't recommend making stepsize that high.
+from multiprocessing import Process
 
+import flask
 import os
 import json
+import thread
 import logging
 import argparse
+
+from flask.helpers import send_from_directory
+from flask.templating import render_template
 from pgoapi import PGoApi
 from geopy.geocoders import GoogleV3
+from flask import Flask
 
 log = logging.getLogger(__name__)
+
+app = Flask(__name__)
+api = None
+
+
+class MyServer:
+    def __init__(self):
+        self.globalData = "hello"
+
+app = Flask(__name__)
+my_server = MyServer()
+
+
+@app.route('/')
+def index():
+    return send_from_directory('templates', 'index.html')
+
+
+@app.route('/api/player')
+def api_player():
+    res = my_server.api.get_player().call()
+    data = res['responses']['GET_PLAYER']['player_data']
+    return flask.jsonify(data)
+
+
+@app.route('/api/inventory')
+def api_inventory():
+    res = my_server.api.get_inventory().call()
+    data = res['responses']['GET_INVENTORY']['inventory_delta']['inventory_items']
+    return flask.jsonify(data)
+
+
+@app.route('/api/pokemon_names')
+def api_pokemon_names():
+    print(my_server.api)
+    return flask.jsonify(my_server.api.pokemon_names)
+
+
+def start_server():
+    app.run(host="0.0.0.0", port=3000, debug=False, use_reloader=False, threaded=True)
+
 
 def get_pos_by_name(location_name):
     geolocator = GoogleV3()
     loc = geolocator.geocode(location_name)
     log.info('Your given location: %s', loc.address.encode('utf-8'))
     log.info('lat/long/alt: %s %s %s', loc.latitude, loc.longitude, loc.altitude)
-    return (loc.latitude, loc.longitude, loc.altitude)
+    return loc.latitude, loc.longitude, loc.altitude
+
     # If you are having problems with the above three lines;
     # That means your API isn't configured or it expired or something happened related to api.
     # If that is the case, just manually input the coordinates of you current location.
@@ -80,18 +129,22 @@ def main():
     api = PGoApi(config.__dict__, pokemon_names)
 
     api.set_position(*position)
+    my_server.api = api
 
     if not api.login(config.auth_service, config.username, config.password, config.cached):
         return
     while True:
-        try:
-            api.main_loop()
-        except Exception as e:
-            log.error('Main loop has an ERROR, restarting %s', e)
-            sleep(30)
-            main()
+        # try:
+        api.main_loop()
+        # except Exception as e:
+        #     log.error('Main loop has an ERROR, restarting %s', e)
+        #     sleep(30)
+        #     main()
 
-    import ipdb; ipdb.set_trace()
 
 if __name__ == '__main__':
+    # p = Process(target=start_server)
+    # p.daemon = True
+    # p.start()
+    thread.start_new_thread(start_server,())
     main()
