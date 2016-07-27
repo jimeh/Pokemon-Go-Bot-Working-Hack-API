@@ -131,6 +131,7 @@ app.controller("homeCtrl", function($scope, $interval, $http) {
                                 icon = 'resources/icons/pokestop-lured.png'
                             }
                             nearby_forts.push({
+                                id: point.id,
                                 lat: point.latitude,
                                 lng: point.longitude,
                                 icon: icon
@@ -140,6 +141,7 @@ app.controller("homeCtrl", function($scope, $interval, $http) {
                     if (cell.catchable_pokemons && cell.catchable_pokemons.length > 0) {
                         cell.catchable_pokemons.forEach(function processPoint(point, j) {
                             nearby_pokemons.push({
+                                id: point.spawn_point_id + '.' + point.pokemon_id,
                                 lat: point.latitude,
                                 lng: point.longitude,
                                 icon: 'resources/icons/' + point.pokemon_id +'.png',
@@ -172,8 +174,8 @@ app.controller("homeCtrl", function($scope, $interval, $http) {
     <div>
         <h3>Your location <small>(<a href="#" ng-click="updateNearby()">update</a>)</small></h3>
         <ng-map zoom="17" center="[{{location.lat}}, {{location.lng}}]" class="map">
-            <marker position="{{point.lat}},{{point.lng}}" icon="{{point.icon}}" ng-repeat="point in nearby_forts"></marker>
-            <marker position="{{point.lat}},{{point.lng}}" icon="{{point.icon}}" ng-repeat="point in nearby_pokemons"></marker>
+            <marker position="{{point.lat}},{{point.lng}}" icon="{{point.icon}}" ng-repeat="point in nearby_forts track by point.id"></marker>
+            <marker position="{{point.lat}},{{point.lng}}" icon="{{point.icon}}" ng-repeat="point in nearby_pokemons track by point.id"></marker>
             <marker position="{{location.lat}},{{location.lng}}" icon="{{point.icon}}"></marker>
         </ng-map>
     </div>
